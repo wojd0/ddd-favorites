@@ -1,0 +1,16 @@
+{
+  "name": "ddd-favorites",
+  "version": "1.0.0",
+  "description": "DDD Milano schedule with favorites feature",
+  "type": "module",
+  "scripts": {
+    "fetch": "node scripts/fetch-schedule.js",
+    "dev": "npm run fetch && vite",
+    "build": "npm run fetch && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0",
+    "node-html-parser": "^6.1.13"
+  }
+}
