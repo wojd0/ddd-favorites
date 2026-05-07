@@ -51,9 +51,9 @@ Create a new `.jsx` file. The component must:
 
 ```jsx
 // src/components/MyWidget.jsx
-import { someSignal, someHelper } from "../store";
+import {someSignal, someHelper} from "../store";
 
-export function MyWidget({ someProp }) {
+export function MyWidget({someProp}) {
   const value = someSignal.value;
 
   function handleClick(e) {
@@ -79,7 +79,7 @@ If the component needs shared reactive state:
 3. Persist to `localStorage` if the state should survive page reloads.
 
 ```js
-import { signal } from "@preact/signals";
+import {signal} from "@preact/signals";
 
 export const myState = signal(initialValue);
 
@@ -102,10 +102,10 @@ Add an injection function that:
 **Template:**
 
 ```jsx
-import { render } from "preact";
-import { effect } from "@preact/signals";
-import { MyWidget } from "./components/MyWidget";
-import { myState } from "./store";
+import {render} from "preact";
+import {effect} from "@preact/signals";
+import {MyWidget} from "./components/MyWidget";
+import {myState} from "./store";
 
 function injectMyWidget() {
   document.querySelectorAll(".target-selector").forEach((el) => {
@@ -135,16 +135,16 @@ function observe() {
   const observer = new MutationObserver(() => {
     injectFavTab();
     injectFavButtons();
-    injectMyWidget();       // ← add here
+    injectMyWidget(); // ← add here
   });
-  observer.observe(document.body, { childList: true, subtree: true });
+  observer.observe(document.body, {childList: true, subtree: true});
 }
 
 function init() {
   injectStyles();
   injectFavTab();
   injectFavButtons();
-  injectMyWidget();         // ← add here
+  injectMyWidget(); // ← add here
   fixSessionLinks();
   observe();
 }
@@ -167,7 +167,7 @@ Prefix all class names with `ddd-` to avoid collisions with the original site's 
 Add the import at the top of `favorites.jsx`:
 
 ```jsx
-import { MyWidget } from "./components/MyWidget";
+import {MyWidget} from "./components/MyWidget";
 ```
 
 ## Rules & Conventions
@@ -194,19 +194,19 @@ import { MyWidget } from "./components/MyWidget";
 
 Key selectors available in the host page:
 
-| Selector | Description |
-|---|---|
-| `.c-tab-days` | Tab bar container (Thu / Fri / Sat tabs) |
-| `[data-ref="tab-days.day"]` | Individual day tab button |
-| `.c-days` | Container for all day schedule grids |
-| `[data-date]` | Day wrapper, `dataset.date` = `"2026-05-07"` etc. |
-| `.c-day__session` | Individual session card |
-| `.c-day__session-title` | Session title text |
-| `.c-day__session-description` | Session description |
-| `.c-day__session-footer` | Footer area of a session card |
-| `.c-day__session-link` | "More info" anchor (href to original site) |
-| `.c-day__session-tag` | Session category tag |
-| `.c-day__session-colophon` | Speaker/company info |
-| `data-start` / `data-end` | Time attributes on `.c-day__session` |
-| `.c-site-header` | Site header |
-| `.c-overlay` | Overlay opened by SWUP for speaker/session details |
+| Selector                      | Description                                        |
+| ----------------------------- | -------------------------------------------------- |
+| `.c-tab-days`                 | Tab bar container (Thu / Fri / Sat tabs)           |
+| `[data-ref="tab-days.day"]`   | Individual day tab button                          |
+| `.c-days`                     | Container for all day schedule grids               |
+| `[data-date]`                 | Day wrapper, `dataset.date` = `"2026-05-07"` etc.  |
+| `.c-day__session`             | Individual session card                            |
+| `.c-day__session-title`       | Session title text                                 |
+| `.c-day__session-description` | Session description                                |
+| `.c-day__session-footer`      | Footer area of a session card                      |
+| `.c-day__session-link`        | "More info" anchor (href to original site)         |
+| `.c-day__session-tag`         | Session category tag                               |
+| `.c-day__session-colophon`    | Speaker/company info                               |
+| `data-start` / `data-end`     | Time attributes on `.c-day__session`               |
+| `.c-site-header`              | Site header                                        |
+| `.c-overlay`                  | Overlay opened by SWUP for speaker/session details |
