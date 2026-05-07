@@ -296,16 +296,10 @@ function observe() {
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
 
-function init() {
+export function init() {
   injectStyles();
   injectFavTab();
   injectFavButtons();
   fixSessionLinks();
   observe();
-}
-
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", init);
-} else {
-  init();
 }

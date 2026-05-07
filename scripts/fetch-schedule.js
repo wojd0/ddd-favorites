@@ -121,7 +121,7 @@ if (body) {
 // the page's own origin (localhost in dev) rather than the <base href> domain.
 const head = root.querySelector("head");
 if (head) {
-  head.insertAdjacentHTML("afterbegin", `<script type="module" src="/src/favorites.jsx"></script>\n`);
+  head.insertAdjacentHTML("afterbegin", `<script type="module" src="/src/init.jsx"></script>\n`);
 }
 
 // ── Write output ──────────────────────────────────────────────────────────────
