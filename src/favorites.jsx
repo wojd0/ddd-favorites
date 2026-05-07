@@ -50,12 +50,17 @@ function injectFavTab() {
   const tabBar = document.querySelector(".c-tab-days");
   if (!tabBar) return;
 
-  // Mount point for the tab button
-  const tabMount = document.createElement("span");
-  tabMount.style.display = "contents";
+  // Create the tab button directly as a child of tabBar (no wrapper)
+  // so CSS direct-child selectors like .c-tab-days > .c-tab-days_day work.
+  const tabBtn = document.createElement("button");
+  tabBtn.id = "ddd-fav-tab";
   const existingTabs = tabBar.querySelectorAll('[data-ref="tab-days.day"]');
   const depth = existingTabs.length;
-  tabBar.appendChild(tabMount);
+  tabBtn.style.setProperty("--depth", String(depth));
+  tabBar.appendChild(tabBtn);
+
+  // Render the inner content (edges + title) once
+  render(<FavTab />, tabBtn);
 
   // Mount point for the favorites panel (after .c-days)
   const cDays = document.querySelector(".c-days");
@@ -81,6 +86,9 @@ function injectFavTab() {
     panelMount.style.display = "block";
   }
 
+  // Attach click handler directly on the button
+  tabBtn.addEventListener("click", handleTabClick);
+
   // When any original day tab is clicked, hide fav panel
   tabBar.addEventListener("click", (e) => {
     const dayBtn = e.target.closest('[data-ref="tab-days.day"]');
@@ -91,13 +99,10 @@ function injectFavTab() {
     setTimeout(injectFavButtons, 400);
   });
 
-  // Reactively render the tab button
+  // Reactively sync tab classes
   effect(() => {
     const active = favTabActive.value;
-    render(<FavTab active={active} onClick={handleTabClick} />, tabMount);
-    // Set --depth on the rendered button
-    const btn = tabMount.querySelector("#ddd-fav-tab");
-    if (btn) btn.style.setProperty("--depth", String(depth));
+    tabBtn.className = `c-tab-days_day ddd-fav-tab-btn ${active ? "is-active" : "is-next"}`;
   });
 
   // Reactively render the panel content when visible
@@ -249,6 +254,13 @@ function injectStyles() {
     .ddd-fav-item__time {
       margin-right: auto;
     }
+    .ddd-fav-item__stage {
+      font-size: 12px;
+      opacity: 0.75;
+      margin: 0;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
     .ddd-fav-item__title {
       font-size: clamp(16px, 1.8vw, 22px);
       margin: 0;
@@ -279,6 +291,37 @@ function injectStyles() {
     .ddd-fav-remove {
       padding: 1px 5px;
       font-size: 13px;
+    }
+    .ddd-fav-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .ddd-fav-count {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+    .ddd-fav-clear-btn,
+    .ddd-fav-remove-btn {
+      border: 1px solid currentColor;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 12px;
+      padding: 8px 10px;
+      opacity: 0.8;
+      transition: opacity 0.15s ease;
+    }
+    .ddd-fav-clear-btn:hover,
+    .ddd-fav-remove-btn:hover {
+      opacity: 1;
+    }
+    .ddd-fav-remove-btn {
+      margin-top: 10px;
+      align-self: flex-start;
     }
   `;
   document.head.appendChild(style);

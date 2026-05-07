@@ -1,4 +1,9 @@
-import { favorites, toggleFavorite, getSessionId } from "../store";
+import {
+  favorites,
+  toggleFavorite,
+  clearFavorites,
+  getSessionId,
+} from "../store";
 
 const DAY_LABELS = {
   "2026-05-07": "Thu 7 May",
@@ -30,6 +35,26 @@ function collectFavorites() {
   return { byDate, missing };
 }
 
+function getStageName(session) {
+  const day = session.closest(".c-day");
+  if (!day) return "Unknown stage";
+
+  const inlineRoom = session.style.getPropertyValue("--room")?.trim();
+  const roomIndex = Number.parseInt(inlineRoom, 10);
+
+  if (Number.isFinite(roomIndex) && roomIndex > 0) {
+    const roomEls = [...day.querySelectorAll(".c-day__room")];
+    const roomEl = roomEls[roomIndex - 1];
+    if (roomEl) {
+      const normalized = roomEl.textContent.replace(/\s+/g, " ").trim();
+      if (normalized) return normalized;
+    }
+  }
+
+  const roomId = session.dataset.roomId;
+  return roomId ? `Stage ${roomId}` : "Unknown stage";
+}
+
 function FavItem({ id, session }) {
   const title =
     session.querySelector(".c-day__session-title")?.textContent?.trim() || "";
@@ -42,6 +67,7 @@ function FavItem({ id, session }) {
     session.querySelector(".c-day__session-tag")?.textContent?.trim() || "";
   const start = session.dataset.start || "";
   const end = session.dataset.end || "";
+  const stage = getStageName(session);
   const linkEl = session.querySelector(".c-day__session-link");
   const link = linkEl ? linkEl.getAttribute("href") : "";
 
@@ -58,17 +84,9 @@ function FavItem({ id, session }) {
           {start}
           {end ? `–${end}` : ""}
         </span>
-        <button
-          class="ddd-fav-btn ddd-fav-btn--active ddd-fav-remove"
-          data-fav-id={id}
-          aria-label="Remove from favorites"
-          title="Remove from favorites"
-          onClick={handleRemove}
-        >
-          ★
-        </button>
       </div>
       <h4 class="ddd-fav-item__title u-text-headline">{title}</h4>
+      <p class="ddd-fav-item__stage u-text-mono">{stage}</p>
       {description && (
         <p class="ddd-fav-item__desc u-text-mono">{description}</p>
       )}
@@ -85,6 +103,15 @@ function FavItem({ id, session }) {
           More info →
         </a>
       )}
+      <button
+        class="ddd-fav-remove-btn u-text-mono"
+        data-fav-id={id}
+        aria-label="Remove from favorites"
+        title="Remove from favorites"
+        onClick={handleRemove}
+      >
+        Remove
+      </button>
     </li>
   );
 }
@@ -103,8 +130,20 @@ export function FavPanel() {
   const { byDate, missing } = collectFavorites();
   const dates = Object.keys(byDate).sort();
 
+  function handleClearAll(e) {
+    e.preventDefault();
+    clearFavorites();
+  }
+
   return (
     <>
+      <div class="ddd-fav-toolbar">
+        <span class="ddd-fav-count u-text-mono">{favs.length} favorite(s)</span>
+        <button class="ddd-fav-clear-btn u-text-mono" onClick={handleClearAll}>
+          Clear favorites
+        </button>
+      </div>
+
       {missing.length > 0 && (
         <p class="ddd-fav-notice u-text-mono">
           ⚠ {missing.length} saved session(s) could not be found in the current

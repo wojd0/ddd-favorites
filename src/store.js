@@ -29,6 +29,11 @@ export function toggleFavorite(id) {
   return idx === -1;
 }
 
+export function clearFavorites() {
+  localStorage.setItem(LS_KEY, JSON.stringify([]));
+  favorites.value = [];
+}
+
 export function getSessionId(session) {
   const day = session.closest("[data-date]");
   const date = day ? day.dataset.date : "unknown";
