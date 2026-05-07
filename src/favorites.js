@@ -113,11 +113,6 @@ function injectFavButtons() {
 // ── Favorites tab + panel ─────────────────────────────────────────────────────
 
 function refreshFavTab() {
-  const badge = document.querySelector(".ddd-fav-tab-count");
-  if (badge) {
-    const count = getFavorites().length;
-    badge.textContent = count > 0 ? String(count) : "";
-  }
 }
 
 function buildPanelHTML() {
@@ -255,7 +250,7 @@ function injectFavTab() {
   tabBtn.innerHTML = `
     <div class="c-tab-days_edge c-tab-days_edge--left"></div>
     <div class="c-tab-days_title">
-      <span>★ Favs <span class="ddd-fav-tab-count"></span></span>
+      <span>★ Favs</span>
     </div>
     <div class="c-tab-days_edge c-tab-days_edge--right"></div>
   `;
@@ -314,7 +309,7 @@ function injectStyles() {
       cursor: pointer;
       font-size: 15px;
       line-height: 1;
-      padding: 2px 7px;
+      padding: 8px 17px;
       opacity: 0.5;
       transition: opacity 0.15s ease, color 0.15s ease, transform 0.1s ease;
       color: inherit;
@@ -352,23 +347,7 @@ function injectStyles() {
     .ddd-fav-tab-btn.is-active .c-tab-days_title {
       color: #1a1a1a;
     }
-    .ddd-fav-tab-count {
-      display: inline-block;
-      min-width: 18px;
-      background: #f5c518;
-      color: #000;
-      border-radius: 10px;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 0 5px;
-      line-height: 18px;
-      vertical-align: middle;
-      margin-left: 4px;
-      transition: transform 0.15s ease;
-    }
-    .ddd-fav-tab-count:empty {
-      display: none;
-    }
+
 
     /* ── Favorites panel ── */
     .ddd-fav-panel {
@@ -476,6 +455,21 @@ function injectStyles() {
   document.head.appendChild(style);
 }
 
+// ── Open session links in new tab ─────────────────────────────────────────────
+// Session "more info" links point to the original DDD site. Without this fix,
+// clicking them navigates away from our app, and the overlay close button on the
+// original site doesn't return to our mirror. Opening in a new tab avoids this.
+
+function fixSessionLinks() {
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a.c-day__session-link');
+    if (!link) return;
+    e.preventDefault();
+    e.stopPropagation();
+    window.open(link.href, '_blank', 'noopener');
+  }, true);
+}
+
 // ── MutationObserver — handles lazy-rendered sessions ─────────────────────────
 
 function observe() {
@@ -492,6 +486,7 @@ function init() {
   injectStyles();
   injectFavTab();
   injectFavButtons();
+  fixSessionLinks();
   observe();
 }
 
