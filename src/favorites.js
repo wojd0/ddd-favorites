@@ -6,13 +6,13 @@
  * next to the existing Thu/Fri/Sat day tabs.  Persists to localStorage.
  */
 
-const LS_KEY = 'ddd_milano_favorites';
+const LS_KEY = "ddd_milano_favorites";
 
 // ── Storage helpers ──────────────────────────────────────────────────────────
 
 function getFavorites() {
   try {
-    return JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+    return JSON.parse(localStorage.getItem(LS_KEY) || "[]");
   } catch {
     return [];
   }
@@ -45,31 +45,31 @@ function toggleFavorite(id) {
 // ── Unique session ID ─────────────────────────────────────────────────────────
 
 function getSessionId(session) {
-  const day = session.closest('[data-date]');
-  const date = day ? day.dataset.date : 'unknown';
-  const start = session.dataset.start || '';
-  const title = session.querySelector('.c-day__session-title')?.textContent?.trim() || '';
+  const day = session.closest("[data-date]");
+  const date = day ? day.dataset.date : "unknown";
+  const start = session.dataset.start || "";
+  const title = session.querySelector(".c-day__session-title")?.textContent?.trim() || "";
   return `${date}__${start}__${title}`;
 }
 
 // ── Star button ───────────────────────────────────────────────────────────────
 
 function makeFavBtn(id) {
-  const btn = document.createElement('button');
-  btn.className = 'ddd-fav-btn' + (isFavorite(id) ? ' ddd-fav-btn--active' : '');
+  const btn = document.createElement("button");
+  btn.className = "ddd-fav-btn" + (isFavorite(id) ? " ddd-fav-btn--active" : "");
   btn.dataset.favId = id;
-  btn.innerHTML = isFavorite(id) ? '★' : '☆';
-  btn.setAttribute('aria-label', isFavorite(id) ? 'Remove from favorites' : 'Add to favorites');
-  btn.title = btn.getAttribute('aria-label');
+  btn.innerHTML = isFavorite(id) ? "★" : "☆";
+  btn.setAttribute("aria-label", isFavorite(id) ? "Remove from favorites" : "Add to favorites");
+  btn.title = btn.getAttribute("aria-label");
 
-  btn.addEventListener('click', (e) => {
+  btn.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
     const added = toggleFavorite(id);
-    btn.innerHTML = added ? '★' : '☆';
-    btn.classList.toggle('ddd-fav-btn--active', added);
-    const label = added ? 'Remove from favorites' : 'Add to favorites';
-    btn.setAttribute('aria-label', label);
+    btn.innerHTML = added ? "★" : "☆";
+    btn.classList.toggle("ddd-fav-btn--active", added);
+    const label = added ? "Remove from favorites" : "Add to favorites";
+    btn.setAttribute("aria-label", label);
     btn.title = label;
     updateAllFavBtnsForId(id, added);
     refreshFavTab();
@@ -82,11 +82,11 @@ function makeFavBtn(id) {
 // Keep all star buttons for the same session in sync (e.g. duplicate cards)
 function updateAllFavBtnsForId(id, active) {
   document.querySelectorAll(`.ddd-fav-btn[data-fav-id]`).forEach((b) => {
-    if (b.dataset.favId !== id || b.classList.contains('ddd-fav-remove')) return;
-    b.innerHTML = active ? '★' : '☆';
-    b.classList.toggle('ddd-fav-btn--active', active);
-    const label = active ? 'Remove from favorites' : 'Add to favorites';
-    b.setAttribute('aria-label', label);
+    if (b.dataset.favId !== id || b.classList.contains("ddd-fav-remove")) return;
+    b.innerHTML = active ? "★" : "☆";
+    b.classList.toggle("ddd-fav-btn--active", active);
+    const label = active ? "Remove from favorites" : "Add to favorites";
+    b.setAttribute("aria-label", label);
     b.title = label;
   });
 }
@@ -94,18 +94,18 @@ function updateAllFavBtnsForId(id, active) {
 // ── Inject star buttons into session cards ────────────────────────────────────
 
 function injectFavButtons() {
-  document.querySelectorAll('.c-day__session').forEach((session) => {
-    if (!session.querySelector('.c-day__session-title')) return;
-    if (session.querySelector('.ddd-fav-btn')) return; // already injected
+  document.querySelectorAll(".c-day__session").forEach((session) => {
+    if (!session.querySelector(".c-day__session-title")) return;
+    if (session.querySelector(".ddd-fav-btn")) return; // already injected
 
     const id = getSessionId(session);
     const btn = makeFavBtn(id);
 
-    const footer = session.querySelector('.c-day__session-footer');
+    const footer = session.querySelector(".c-day__session-footer");
     if (footer) {
       footer.appendChild(btn);
     } else {
-      session.querySelector('.c-day__session-content')?.appendChild(btn);
+      session.querySelector(".c-day__session-content")?.appendChild(btn);
     }
   });
 }
@@ -113,10 +113,10 @@ function injectFavButtons() {
 // ── Favorites tab + panel ─────────────────────────────────────────────────────
 
 function refreshFavTab() {
-  const badge = document.querySelector('.ddd-fav-tab-count');
+  const badge = document.querySelector(".ddd-fav-tab-count");
   if (badge) {
     const count = getFavorites().length;
-    badge.textContent = count > 0 ? String(count) : '';
+    badge.textContent = count > 0 ? String(count) : "";
   }
 }
 
@@ -129,31 +129,29 @@ function buildPanelHTML() {
 
   // Collect matching sessions from the DOM, grouped by date
   const byDate = {};
-  document.querySelectorAll('.c-day__session').forEach((session) => {
+  document.querySelectorAll(".c-day__session").forEach((session) => {
     const id = getSessionId(session);
     if (!favs.includes(id)) return;
-    const day = session.closest('[data-date]');
-    const date = day ? day.dataset.date : 'unknown';
+    const day = session.closest("[data-date]");
+    const date = day ? day.dataset.date : "unknown";
     if (!byDate[date]) byDate[date] = [];
     // Avoid duplicates (same session can appear in multiple grid groups)
     if (!byDate[date].find((e) => e.id === id)) {
-      byDate[date].push({ id, session });
+      byDate[date].push({id, session});
     }
   });
 
   const dayLabels = {
-    '2026-05-07': 'Thu 7 May',
-    '2026-05-08': 'Fri 8 May',
-    '2026-05-09': 'Sat 9 May',
+    "2026-05-07": "Thu 7 May",
+    "2026-05-08": "Fri 8 May",
+    "2026-05-09": "Sat 9 May",
   };
 
   // Warn if some saved sessions aren't currently in the DOM
-  const domIds = new Set(
-    [...document.querySelectorAll('.c-day__session')].map(getSessionId)
-  );
+  const domIds = new Set([...document.querySelectorAll(".c-day__session")].map(getSessionId));
   const missing = favs.filter((id) => !domIds.has(id));
 
-  let html = '';
+  let html = "";
 
   if (missing.length) {
     html += `<p class="ddd-fav-notice u-text-mono">⚠ ${missing.length} saved session(s) could not be found in the current schedule and may have been removed or renamed.</p>`;
@@ -164,54 +162,56 @@ function buildPanelHTML() {
     return html;
   }
 
-  Object.keys(byDate).sort().forEach((date) => {
-    html += `<h3 class="ddd-fav-day-label u-text-mono">${dayLabels[date] || date}</h3><ul class="ddd-fav-list">`;
+  Object.keys(byDate)
+    .sort()
+    .forEach((date) => {
+      html += `<h3 class="ddd-fav-day-label u-text-mono">${dayLabels[date] || date}</h3><ul class="ddd-fav-list">`;
 
-    byDate[date].forEach(({ id, session }) => {
-      const title = session.querySelector('.c-day__session-title')?.textContent?.trim() || '';
-      const description = session.querySelector('.c-day__session-description')?.textContent?.trim() || '';
-      const colophon = session.querySelector('.c-day__session-colophon')?.textContent?.trim() || '';
-      const tag = session.querySelector('.c-day__session-tag')?.textContent?.trim() || '';
-      const start = session.dataset.start || '';
-      const end = session.dataset.end || '';
-      // The link href was already rewritten to absolute by fetch-schedule.js
-      const linkEl = session.querySelector('.c-day__session-link');
-      const link = linkEl ? linkEl.getAttribute('href') : '';
-      const safeId = id.replace(/"/g, '&quot;');
+      byDate[date].forEach(({id, session}) => {
+        const title = session.querySelector(".c-day__session-title")?.textContent?.trim() || "";
+        const description = session.querySelector(".c-day__session-description")?.textContent?.trim() || "";
+        const colophon = session.querySelector(".c-day__session-colophon")?.textContent?.trim() || "";
+        const tag = session.querySelector(".c-day__session-tag")?.textContent?.trim() || "";
+        const start = session.dataset.start || "";
+        const end = session.dataset.end || "";
+        // The link href was already rewritten to absolute by fetch-schedule.js
+        const linkEl = session.querySelector(".c-day__session-link");
+        const link = linkEl ? linkEl.getAttribute("href") : "";
+        const safeId = id.replace(/"/g, "&quot;");
 
-      html += `
+        html += `
         <li class="ddd-fav-item">
           <div class="ddd-fav-item__header u-text-mono">
-            ${tag ? `<span class="ddd-fav-item__tag">${tag}</span>` : ''}
-            <span class="ddd-fav-item__time">${start}${end ? '–' + end : ''}</span>
+            ${tag ? `<span class="ddd-fav-item__tag">${tag}</span>` : ""}
+            <span class="ddd-fav-item__time">${start}${end ? "–" + end : ""}</span>
             <button class="ddd-fav-btn ddd-fav-btn--active ddd-fav-remove"
                     data-fav-id="${safeId}"
                     aria-label="Remove from favorites"
                     title="Remove from favorites">★</button>
           </div>
           <h4 class="ddd-fav-item__title u-text-headline">${title}</h4>
-          ${description ? `<p class="ddd-fav-item__desc u-text-mono">${description}</p>` : ''}
-          ${colophon ? `<p class="ddd-fav-item__colophon u-text-mono">${colophon}</p>` : ''}
-          ${link ? `<a href="${link}" class="ddd-fav-item__link u-text-mono" target="_blank" rel="noopener">More info →</a>` : ''}
+          ${description ? `<p class="ddd-fav-item__desc u-text-mono">${description}</p>` : ""}
+          ${colophon ? `<p class="ddd-fav-item__colophon u-text-mono">${colophon}</p>` : ""}
+          ${link ? `<a href="${link}" class="ddd-fav-item__link u-text-mono" target="_blank" rel="noopener">More info →</a>` : ""}
         </li>`;
-    });
+      });
 
-    html += '</ul>';
-  });
+      html += "</ul>";
+    });
 
   return html;
 }
 
 function renderFavoritesPanel() {
-  const panel = document.getElementById('ddd-fav-panel');
-  if (!panel || panel.style.display === 'none') return;
+  const panel = document.getElementById("ddd-fav-panel");
+  if (!panel || panel.style.display === "none") return;
   panel.innerHTML = buildPanelHTML();
   wireRemoveButtons(panel);
 }
 
 function wireRemoveButtons(panel) {
-  panel.querySelectorAll('.ddd-fav-remove').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
+  panel.querySelectorAll(".ddd-fav-remove").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
       e.preventDefault();
       const id = btn.dataset.favId;
       toggleFavorite(id);
@@ -223,74 +223,74 @@ function wireRemoveButtons(panel) {
 }
 
 function showFavPanel() {
-  const cDays = document.querySelector('.c-days');
-  const panel = document.getElementById('ddd-fav-panel');
+  const cDays = document.querySelector(".c-days");
+  const panel = document.getElementById("ddd-fav-panel");
   if (!panel || !cDays) return;
-  cDays.style.display = 'none';
-  panel.style.display = 'block';
+  cDays.style.display = "none";
+  panel.style.display = "block";
   renderFavoritesPanel();
 }
 
 function hideFavPanel() {
-  const cDays = document.querySelector('.c-days');
-  const panel = document.getElementById('ddd-fav-panel');
+  const cDays = document.querySelector(".c-days");
+  const panel = document.getElementById("ddd-fav-panel");
   if (!panel || !cDays) return;
-  panel.style.display = 'none';
-  cDays.style.display = '';
+  panel.style.display = "none";
+  cDays.style.display = "";
 }
 
 function injectFavTab() {
-  if (document.getElementById('ddd-fav-tab')) return;
+  if (document.getElementById("ddd-fav-tab")) return;
 
-  const tabBar = document.querySelector('.c-tab-days');
+  const tabBar = document.querySelector(".c-tab-days");
   if (!tabBar) return;
 
   // Build and append the tab button
-  const tabBtn = document.createElement('button');
-  tabBtn.id = 'ddd-fav-tab';
-  tabBtn.className = 'c-tab-days_day ddd-fav-tab-btn is-next';
+  const tabBtn = document.createElement("button");
+  tabBtn.id = "ddd-fav-tab";
+  tabBtn.className = "c-tab-days_day ddd-fav-tab-btn is-next";
   // Set depth to match position after existing tabs
   const existingTabs = tabBar.querySelectorAll('[data-ref="tab-days.day"]');
-  tabBtn.style.setProperty('--depth', String(existingTabs.length));
+  tabBtn.style.setProperty("--depth", String(existingTabs.length));
   tabBtn.innerHTML = `
     <div class="c-tab-days_edge c-tab-days_edge--left"></div>
     <div class="c-tab-days_title">
-      <span>★ Favorites <span class="ddd-fav-tab-count"></span></span>
+      <span>★ Favs <span class="ddd-fav-tab-count"></span></span>
     </div>
     <div class="c-tab-days_edge c-tab-days_edge--right"></div>
   `;
   tabBar.appendChild(tabBtn);
 
   // Build and insert the panel right after .c-days
-  const cDays = document.querySelector('.c-days');
+  const cDays = document.querySelector(".c-days");
   if (!cDays) return;
 
-  const panel = document.createElement('div');
-  panel.id = 'ddd-fav-panel';
-  panel.className = 'ddd-fav-panel o-container';
-  panel.style.display = 'none';
-  cDays.insertAdjacentElement('afterend', panel);
+  const panel = document.createElement("div");
+  panel.id = "ddd-fav-panel";
+  panel.className = "ddd-fav-panel o-container";
+  panel.style.display = "none";
+  cDays.insertAdjacentElement("afterend", panel);
 
   // Favorites tab click
-  tabBtn.addEventListener('click', () => {
-    if (tabBtn.classList.contains('is-active')) return;
+  tabBtn.addEventListener("click", () => {
+    if (tabBtn.classList.contains("is-active")) return;
     document.querySelectorAll('[data-ref="tab-days.day"]').forEach((d) => {
-      d.classList.remove('is-active');
-      d.classList.add('is-next');
+      d.classList.remove("is-active");
+      d.classList.add("is-next");
     });
-    tabBtn.classList.add('is-active');
-    tabBtn.classList.remove('is-next');
+    tabBtn.classList.add("is-active");
+    tabBtn.classList.remove("is-next");
     showFavPanel();
   });
 
   // When any original day tab is clicked, hide fav panel
   // Use event delegation on the tab bar to catch both initial and future clicks
-  tabBar.addEventListener('click', (e) => {
+  tabBar.addEventListener("click", (e) => {
     const dayBtn = e.target.closest('[data-ref="tab-days.day"]');
     if (!dayBtn) return;
     hideFavPanel();
-    tabBtn.classList.remove('is-active');
-    tabBtn.classList.add('is-next');
+    tabBtn.classList.remove("is-active");
+    tabBtn.classList.add("is-next");
     // Re-inject buttons after the site re-renders sessions for the new day
     setTimeout(injectFavButtons, 400);
   });
@@ -301,10 +301,10 @@ function injectFavTab() {
 // ── Styles ────────────────────────────────────────────────────────────────────
 
 function injectStyles() {
-  if (document.getElementById('ddd-fav-styles')) return;
+  if (document.getElementById("ddd-fav-styles")) return;
 
-  const style = document.createElement('style');
-  style.id = 'ddd-fav-styles';
+  const style = document.createElement("style");
+  style.id = "ddd-fav-styles";
   style.textContent = `
     /* ── Star button on session cards ── */
     .ddd-fav-btn {
@@ -477,7 +477,7 @@ function observe() {
     injectFavTab();
     injectFavButtons();
   });
-  observer.observe(document.body, { childList: true, subtree: true });
+  observer.observe(document.body, {childList: true, subtree: true});
 }
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
@@ -489,8 +489,8 @@ function init() {
   observe();
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
 } else {
   init();
 }
