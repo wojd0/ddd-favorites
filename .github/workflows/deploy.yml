@@ -29,14 +29,12 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: ddd-favorites/package.json
+          cache-dependency-path: package.json
 
       - name: Install dependencies
-        working-directory: ddd-favorites
         run: npm ci
 
       - name: Fetch schedule & build
-        working-directory: ddd-favorites
         # VITE_BASE must match the GitHub Pages sub-path.
         # If you publish to https://<user>.github.io/ddd-favorites/ set it to /ddd-favorites/
         # If you use a custom domain set it to /
@@ -48,7 +46,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ddd-favorites/dist
+          publish_dir: dist
           # Keep the gh-pages branch history lean
           force_orphan: true
           # Add a .nojekyll file so GitHub Pages serves files starting with _
