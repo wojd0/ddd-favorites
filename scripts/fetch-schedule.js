@@ -95,16 +95,11 @@ root.querySelectorAll('[style]').forEach((el) => {
   el.setAttribute('style', rewritten);
 });
 
-// Fix <base> tag if present — remove or set to origin so relative fetches work
+// Remove <base> tag — all URLs are already rewritten to absolute above,
+// and a <base> would break the bundled script src resolution in production.
 const baseEl = root.querySelector('base');
 if (baseEl) {
-  baseEl.setAttribute('href', `${ORIGIN}/`);
-} else {
-  // Inject a base tag so any remaining relative references resolve correctly
-  const head = root.querySelector('head');
-  if (head) {
-    head.insertAdjacentHTML('afterbegin', `<base href="${ORIGIN}/">\n`);
-  }
+  baseEl.remove();
 }
 
 // ── Inject build timestamp comment ───────────────────────────────────────────
