@@ -112,8 +112,7 @@ function injectFavButtons() {
 
 // ── Favorites tab + panel ─────────────────────────────────────────────────────
 
-function refreshFavTab() {
-}
+function refreshFavTab() {}
 
 function buildPanelHTML() {
   const favs = getFavorites();
@@ -461,13 +460,17 @@ function injectStyles() {
 // original site doesn't return to our mirror. Opening in a new tab avoids this.
 
 function fixSessionLinks() {
-  document.addEventListener('click', (e) => {
-    const link = e.target.closest('a.c-day__session-link');
-    if (!link) return;
-    e.preventDefault();
-    e.stopPropagation();
-    window.open(link.href, '_blank', 'noopener');
-  }, true);
+  document.addEventListener(
+    "click",
+    (e) => {
+      const link = e.target.closest("a.c-day__session-link");
+      if (!link) return;
+      e.preventDefault();
+      e.stopPropagation();
+      window.open(link.href, "_blank", "noopener");
+    },
+    true,
+  );
 }
 
 // ── MutationObserver — handles lazy-rendered sessions ─────────────────────────

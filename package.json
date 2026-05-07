@@ -10,7 +10,12 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^5.4.0",
-    "node-html-parser": "^6.1.13"
+    "node-html-parser": "^6.1.13",
+    "vite": "^5.4.0"
+  },
+  "dependencies": {
+    "@preact/preset-vite": "^2.10.5",
+    "@preact/signals": "^2.9.0",
+    "preact": "^10.29.1"
   }
 }
