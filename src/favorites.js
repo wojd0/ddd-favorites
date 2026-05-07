@@ -343,8 +343,14 @@ function injectStyles() {
     .ddd-fav-tab-btn {
       cursor: pointer;
     }
+    .ddd-fav-tab-btn.is-active {
+      --depth: 0 !important;
+    }
+    .ddd-fav-tab-btn.is-active > * {
+      background: #fff8e1 !important;
+    }
     .ddd-fav-tab-btn.is-active .c-tab-days_title {
-      color: #f5c518;
+      color: #1a1a1a;
     }
     .ddd-fav-tab-count {
       display: inline-block;
