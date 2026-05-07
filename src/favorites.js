@@ -248,7 +248,10 @@ function injectFavTab() {
   // Build and append the tab button
   const tabBtn = document.createElement('button');
   tabBtn.id = 'ddd-fav-tab';
-  tabBtn.className = 'c-tab-days_day ddd-fav-tab-btn';
+  tabBtn.className = 'c-tab-days_day ddd-fav-tab-btn is-next';
+  // Set depth to match position after existing tabs
+  const existingTabs = tabBar.querySelectorAll('[data-ref="tab-days.day"]');
+  tabBtn.style.setProperty('--depth', String(existingTabs.length));
   tabBtn.innerHTML = `
     <div class="c-tab-days_edge c-tab-days_edge--left"></div>
     <div class="c-tab-days_title">
@@ -271,10 +274,12 @@ function injectFavTab() {
   // Favorites tab click
   tabBtn.addEventListener('click', () => {
     if (tabBtn.classList.contains('is-active')) return;
-    document.querySelectorAll('[data-ref="tab-days.day"]').forEach((d) =>
-      d.classList.remove('is-active')
-    );
+    document.querySelectorAll('[data-ref="tab-days.day"]').forEach((d) => {
+      d.classList.remove('is-active');
+      d.classList.add('is-next');
+    });
     tabBtn.classList.add('is-active');
+    tabBtn.classList.remove('is-next');
     showFavPanel();
   });
 
@@ -285,6 +290,7 @@ function injectFavTab() {
     if (!dayBtn) return;
     hideFavPanel();
     tabBtn.classList.remove('is-active');
+    tabBtn.classList.add('is-next');
     // Re-inject buttons after the site re-renders sessions for the new day
     setTimeout(injectFavButtons, 400);
   });
@@ -336,6 +342,9 @@ function injectStyles() {
     /* ── Favorites tab button ── */
     .ddd-fav-tab-btn {
       cursor: pointer;
+    }
+    .ddd-fav-tab-btn.is-active .c-tab-days_title {
+      color: #f5c518;
     }
     .ddd-fav-tab-count {
       display: inline-block;
