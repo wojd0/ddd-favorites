@@ -35,24 +35,58 @@ function collectFavorites() {
   return { byDate, missing };
 }
 
-function getStageName(session) {
+function getPillTextColor(color) {
+  const hex = color.match(/^#?([a-f\d]{6})$/i)?.[1];
+  if (!hex) return "#111120";
+
+  const red = Number.parseInt(hex.slice(0, 2), 16);
+  const green = Number.parseInt(hex.slice(2, 4), 16);
+  const blue = Number.parseInt(hex.slice(4, 6), 16);
+  const luminance = (red * 299 + green * 587 + blue * 114) / 1000;
+
+  return luminance > 135 ? "#111120" : "#ffffff";
+}
+
+function getStageInfo(session) {
   const day = session.closest(".c-day");
-  if (!day) return "Unknown stage";
+  const fallbackColor = "#f5c518";
+  if (!day) {
+    return {
+      label: "Unknown stage",
+      color: fallbackColor,
+      textColor: getPillTextColor(fallbackColor),
+    };
+  }
 
   const inlineRoom = session.style.getPropertyValue("--room")?.trim();
   const roomIndex = Number.parseInt(inlineRoom, 10);
 
   if (Number.isFinite(roomIndex) && roomIndex > 0) {
-    const roomEls = [...day.querySelectorAll(".c-day__room")];
+    const grid = session.closest(".c-day__grid") || day;
+    const roomEls = [...grid.querySelectorAll(".c-day__room")];
     const roomEl = roomEls[roomIndex - 1];
     if (roomEl) {
-      const normalized = roomEl.textContent.replace(/\s+/g, " ").trim();
-      if (normalized) return normalized;
+      const labelEl = roomEl.querySelector(".c-day__room-title") || roomEl;
+      const normalized = labelEl.textContent.replace(/\s+/g, " ").trim();
+      const color =
+        roomEl.style.getPropertyValue("--color")?.trim() || fallbackColor;
+
+      if (normalized) {
+        return {
+          label: normalized,
+          color,
+          textColor: getPillTextColor(color),
+        };
+      }
     }
   }
 
   const roomId = session.dataset.roomId;
-  return roomId ? `Stage ${roomId}` : "Unknown stage";
+  return {
+    label: roomId ? `Stage ${roomId}` : "Unknown stage",
+    color: fallbackColor,
+    textColor: getPillTextColor(fallbackColor),
+  };
 }
 
 function FavItem({ id, session }) {
@@ -67,7 +101,7 @@ function FavItem({ id, session }) {
     session.querySelector(".c-day__session-tag")?.textContent?.trim() || "";
   const start = session.dataset.start || "";
   const end = session.dataset.end || "";
-  const stage = getStageName(session);
+  const stage = getStageInfo(session);
   const linkEl = session.querySelector(".c-day__session-link");
   const link = linkEl ? linkEl.getAttribute("href") : "";
 
@@ -86,7 +120,17 @@ function FavItem({ id, session }) {
         </span>
       </div>
       <h4 class="ddd-fav-item__title u-text-headline">{title}</h4>
-      <p class="ddd-fav-item__stage u-text-mono">{stage}</p>
+      <p class="ddd-fav-item__stage u-text-mono">
+        <span
+          class="ddd-fav-item__stage-pill"
+          style={{
+            "--ddd-fav-stage-bg": stage.color,
+            "--ddd-fav-stage-fg": stage.textColor,
+          }}
+        >
+          {stage.label}
+        </span>
+      </p>
       {description && (
         <p class="ddd-fav-item__desc u-text-mono">{description}</p>
       )}
