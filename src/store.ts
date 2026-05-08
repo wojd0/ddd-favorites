@@ -4,8 +4,16 @@ const LS_KEY = "ddd_milano_favorites";
 
 function load() {
   try {
-    return JSON.parse(localStorage.getItem(LS_KEY) || "[]");
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw === null) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed) || !parsed.every((v) => typeof v === "string")) {
+      localStorage.removeItem(LS_KEY);
+      return [];
+    }
+    return parsed;
   } catch {
+    localStorage.removeItem(LS_KEY);
     return [];
   }
 }
@@ -16,6 +24,12 @@ export function isFavorite(id) {
   return favorites.value.includes(id);
 }
 
+function save(favs) {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify(favs));
+  } catch { /* quota exceeded or private browsing — state stays in-memory */ }
+}
+
 export function toggleFavorite(id) {
   const favs = [...favorites.value];
   const idx = favs.indexOf(id);
@@ -24,13 +38,13 @@ export function toggleFavorite(id) {
   } else {
     favs.splice(idx, 1);
   }
-  localStorage.setItem(LS_KEY, JSON.stringify(favs));
+  save(favs);
   favorites.value = favs;
   return idx === -1;
 }
 
 export function clearFavorites() {
-  localStorage.setItem(LS_KEY, JSON.stringify([]));
+  save([]);
   favorites.value = [];
 }
 
