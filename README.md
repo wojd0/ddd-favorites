@@ -12,14 +12,14 @@ A static mirror of the [DDD Milano schedule](https://milano.ddd.live/schedule/) 
 ## Local development
 
 ```bash
-npm install
-npm run dev        # fetch + vite dev server
+bun install
+bun run dev        # fetch + vite dev server
 ```
 
 ## Build
 
 ```bash
-npm run build      # produces dist/
+bun run build      # produces dist/
 ```
 
 ## GitHub Pages deployment

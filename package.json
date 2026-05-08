@@ -4,9 +4,9 @@
   "description": "DDD Milano schedule with favorites feature",
   "type": "module",
   "scripts": {
-    "fetch": "node scripts/fetch-schedule.js",
-    "dev": "npm run fetch && vite",
-    "build": "npm run fetch && vite build",
+    "fetch": "bun scripts/fetch-schedule.js",
+    "dev": "bun run fetch && vite",
+    "build": "bun run fetch && vite build",
     "preview": "vite preview"
   },
   "devDependencies": {

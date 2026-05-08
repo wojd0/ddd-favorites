@@ -27,18 +27,18 @@ ddd-favorites/
 └── .github/
     └── workflows/
         └── deploy.yml           # triggers: push to main, daily cron 06:00 UTC, manual
-                                  # runs npm ci → npm run build → peaceiris/actions-gh-pages
+                                  # runs bun install --frozen-lockfile → bun run build → peaceiris/actions-gh-pages
                                   # publishes ddd-favorites/dist to gh-pages branch
 ```
 
 ## How the build works
 
-1. `npm run fetch` → `scripts/fetch-schedule.js` fetches the live HTML, rewrites all
+1. `bun run fetch` → `scripts/fetch-schedule.js` fetches the live HTML, rewrites all
    relative URLs to absolute `https://milano.ddd.live/...` ones, injects a `<base>` tag
    and the favorites script reference, writes to `public/index.html`.
-2. `npx vite build` → Vite treats `public/` as root, bundles `src/favorites.js` into
+2. `vite build` → Vite treats `public/` as root, bundles `src/` into
    `dist/assets/index-*.js`, outputs final `dist/index.html`.
-3. `npm run build` = steps 1 + 2 combined.
+3. `bun run build` = steps 1 + 2 combined.
 
 ## Key implementation details
 
