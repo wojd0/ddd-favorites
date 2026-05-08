@@ -11,7 +11,9 @@
   transition: opacity 0.15s ease, color 0.15s ease, transform 0.1s ease;
   color: inherit;
   flex-shrink: 0;
+  position: relative;
   vertical-align: middle;
+  z-index: 6;
 }
 .ddd-fav-btn:hover {
   opacity: 1;
@@ -27,6 +29,15 @@
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+}
+.ddd-fav-btn-mount {
+  position: relative;
+  z-index: 5;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+.ddd-fav-btn-mount .ddd-fav-btn {
+  pointer-events: auto;
 }
 
 /* ── Favorites tab button ── */

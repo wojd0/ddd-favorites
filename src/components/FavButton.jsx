@@ -1,5 +1,12 @@
 import { isFavorite, toggleFavorite } from "../store";
 
+function stopFavoriteEvent(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  e.nativeEvent?.stopImmediatePropagation?.();
+  e.stopImmediatePropagation?.();
+}
+
 export function FavButton({ id }) {
   const active = isFavorite(id);
 
@@ -11,11 +18,31 @@ export function FavButton({ id }) {
     btn.title = label;
   }
 
-  function handleClick(e) {
-    e.preventDefault();
-    e.stopPropagation();
+  function toggleButton(btn) {
     const added = toggleFavorite(id);
-    applyButtonState(e.currentTarget, added);
+    applyButtonState(btn, added);
+  }
+
+  function handlePointerUp(e) {
+    if (typeof e.button === "number" && e.button !== 0) return;
+
+    const btn = e.currentTarget;
+    stopFavoriteEvent(e);
+    btn.dataset.dddFavPointerHandled = "true";
+    toggleButton(btn);
+    setTimeout(() => {
+      delete btn.dataset.dddFavPointerHandled;
+    }, 0);
+  }
+
+  function handleClick(e) {
+    stopFavoriteEvent(e);
+    if (e.currentTarget.dataset.dddFavPointerHandled === "true") {
+      delete e.currentTarget.dataset.dddFavPointerHandled;
+      return;
+    }
+
+    toggleButton(e.currentTarget);
   }
 
   return (
@@ -24,6 +51,10 @@ export function FavButton({ id }) {
       data-fav-id={id}
       aria-label={active ? "Remove from favorites" : "Add to favorites"}
       title={active ? "Remove from favorites" : "Add to favorites"}
+      onPointerDown={stopFavoriteEvent}
+      onPointerUp={handlePointerUp}
+      onMouseDown={stopFavoriteEvent}
+      onMouseUp={stopFavoriteEvent}
       onClick={handleClick}
     >
       {active ? "★" : "☆"}

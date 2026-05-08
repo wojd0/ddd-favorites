@@ -27,6 +27,7 @@ function injectFavButtons() {
 
     const id = getSessionId(session);
     const mount = document.createElement("span");
+    mount.className = "ddd-fav-btn-mount";
 
     const footer = session.querySelector(".c-day__session-footer");
     if (footer) {

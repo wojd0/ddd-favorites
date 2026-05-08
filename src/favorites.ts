@@ -20,11 +20,11 @@ function getFavorites() {
   }
 }
 
-function saveFavorites(list) {
+function saveFavorites(list: string[]) {
   localStorage.setItem(LS_KEY, JSON.stringify(list));
 }
 
-function isFavorite(id) {
+function isFavorite(id: string) {
   return getFavorites().includes(id);
 }
 
@@ -32,7 +32,7 @@ function isFavorite(id) {
  * Toggle a session in/out of favorites.
  * @returns {boolean} true if it was added, false if removed
  */
-function toggleFavorite(id) {
+function toggleFavorite(id: string): boolean {
   const favs = getFavorites();
   const idx = favs.indexOf(id);
   if (idx === -1) {
@@ -46,8 +46,8 @@ function toggleFavorite(id) {
 
 // ── Unique session ID ─────────────────────────────────────────────────────────
 
-function getSessionId(session) {
-  const day = session.closest("[data-date]");
+function getSessionId(session: HTMLElement): string {
+  const day = session.closest<HTMLElement>("[data-date]");
   const date = day ? day.dataset.date : "unknown";
   const start = session.dataset.start || "";
   const title = session.querySelector(".c-day__session-title")?.textContent?.trim() || "";
@@ -56,13 +56,13 @@ function getSessionId(session) {
 
 // ── Star button ───────────────────────────────────────────────────────────────
 
-function makeFavBtn(id) {
+function makeFavBtn(id: string): HTMLButtonElement {
   const btn = document.createElement("button");
   btn.className = "ddd-fav-btn" + (isFavorite(id) ? " ddd-fav-btn--active" : "");
   btn.dataset.favId = id;
   btn.innerHTML = isFavorite(id) ? "★" : "☆";
   btn.setAttribute("aria-label", isFavorite(id) ? "Remove from favorites" : "Add to favorites");
-  btn.title = btn.getAttribute("aria-label");
+  btn.title = btn.getAttribute("aria-label") || "";
 
   btn.addEventListener("click", (e) => {
     e.preventDefault();
@@ -82,8 +82,8 @@ function makeFavBtn(id) {
 }
 
 // Keep all star buttons for the same session in sync (e.g. duplicate cards)
-function updateAllFavBtnsForId(id, active) {
-  document.querySelectorAll(`.ddd-fav-btn[data-fav-id]`).forEach((b) => {
+function updateAllFavBtnsForId(id: string, active: boolean) {
+  document.querySelectorAll<HTMLButtonElement>(`.ddd-fav-btn[data-fav-id]`).forEach((b) => {
     if (b.dataset.favId !== id || b.classList.contains("ddd-fav-remove")) return;
     b.innerHTML = active ? "★" : "☆";
     b.classList.toggle("ddd-fav-btn--active", active);
@@ -96,7 +96,7 @@ function updateAllFavBtnsForId(id, active) {
 // ── Inject star buttons into session cards ────────────────────────────────────
 
 function injectFavButtons() {
-  document.querySelectorAll(".c-day__session").forEach((session) => {
+  document.querySelectorAll<HTMLDivElement>(".c-day__session").forEach((session) => {
     if (!session.querySelector(".c-day__session-title")) return;
     if (session.querySelector(".ddd-fav-btn")) return; // already injected
 
@@ -124,28 +124,28 @@ function buildPanelHTML() {
   }
 
   // Collect matching sessions from the DOM, grouped by date
-  const byDate = {};
-  document.querySelectorAll(".c-day__session").forEach((session) => {
+  const byDate: Record<string, {id: string; session: HTMLElement}[]> = {};
+  document.querySelectorAll<HTMLElement>(".c-day__session").forEach((session) => {
     const id = getSessionId(session);
     if (!favs.includes(id)) return;
-    const day = session.closest("[data-date]");
-    const date = day ? day.dataset.date : "unknown";
+    const day = session.closest<HTMLElement>("[data-date]");
+    const date = day ? day.dataset.date || "unknown" : "unknown";
     if (!byDate[date]) byDate[date] = [];
     // Avoid duplicates (same session can appear in multiple grid groups)
-    if (!byDate[date].find((e) => e.id === id)) {
-      byDate[date].push({id, session});
+    if (!byDate[date]!.find((e) => e.id === id)) {
+      byDate[date]!.push({id, session});
     }
   });
 
-  const dayLabels = {
+  const dayLabels: Record<string, string> = {
     "2026-05-07": "Thu 7 May",
     "2026-05-08": "Fri 8 May",
     "2026-05-09": "Sat 9 May",
   };
 
   // Warn if some saved sessions aren't currently in the DOM
-  const domIds = new Set([...document.querySelectorAll(".c-day__session")].map(getSessionId));
-  const missing = favs.filter((id) => !domIds.has(id));
+  const domIds = new Set([...document.querySelectorAll<HTMLElement>(".c-day__session")].map(getSessionId));
+  const missing = favs.filter((id: string) => !domIds.has(id));
 
   let html = "";
 
@@ -163,7 +163,7 @@ function buildPanelHTML() {
     .forEach((date) => {
       html += `<h3 class="ddd-fav-day-label u-text-mono">${dayLabels[date] || date}</h3><ul class="ddd-fav-list">`;
 
-      byDate[date].forEach(({id, session}) => {
+      byDate[date]?.forEach(({id, session}) => {
         const title = session.querySelector(".c-day__session-title")?.textContent?.trim() || "";
         const description = session.querySelector(".c-day__session-description")?.textContent?.trim() || "";
         const colophon = session.querySelector(".c-day__session-colophon")?.textContent?.trim() || "";
@@ -205,11 +205,11 @@ function renderFavoritesPanel() {
   wireRemoveButtons(panel);
 }
 
-function wireRemoveButtons(panel) {
-  panel.querySelectorAll(".ddd-fav-remove").forEach((btn) => {
+function wireRemoveButtons(panel: HTMLElement) {
+  panel.querySelectorAll<HTMLButtonElement>(".ddd-fav-remove").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
-      const id = btn.dataset.favId;
+      const id = btn.dataset.favId ?? "";
       toggleFavorite(id);
       updateAllFavBtnsForId(id, false);
       refreshFavTab();
@@ -219,7 +219,7 @@ function wireRemoveButtons(panel) {
 }
 
 function showFavPanel() {
-  const cDays = document.querySelector(".c-days");
+  const cDays = document.querySelector<HTMLElement>(".c-days");
   const panel = document.getElementById("ddd-fav-panel");
   if (!panel || !cDays) return;
   cDays.style.display = "none";
@@ -228,7 +228,7 @@ function showFavPanel() {
 }
 
 function hideFavPanel() {
-  const cDays = document.querySelector(".c-days");
+  const cDays = document.querySelector<HTMLElement>(".c-days");
   const panel = document.getElementById("ddd-fav-panel");
   if (!panel || !cDays) return;
   panel.style.display = "none";
@@ -282,7 +282,7 @@ function injectFavTab() {
   // When any original day tab is clicked, hide fav panel
   // Use event delegation on the tab bar to catch both initial and future clicks
   tabBar.addEventListener("click", (e) => {
-    const dayBtn = e.target.closest('[data-ref="tab-days.day"]');
+    const dayBtn = (e.target as Element | null)?.closest('[data-ref="tab-days.day"]');
     if (!dayBtn) return;
     hideFavPanel();
     tabBtn.classList.remove("is-active");
@@ -303,7 +303,7 @@ function fixSessionLinks() {
   document.addEventListener(
     "click",
     (e) => {
-      const link = e.target.closest("a.c-day__session-link");
+      const link = (e.target as Element | null)?.closest<HTMLAnchorElement>("a.c-day__session-link");
       if (!link) return;
       e.preventDefault();
       e.stopPropagation();
