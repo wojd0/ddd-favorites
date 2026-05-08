@@ -1,61 +1,32 @@
+import { useRef, useEffect } from "preact/hooks";
 import { isFavorite, toggleFavorite } from "../store";
-
-function stopFavoriteEvent(e) {
-  e.preventDefault();
-  e.stopPropagation();
-  e.nativeEvent?.stopImmediatePropagation?.();
-  e.stopImmediatePropagation?.();
-}
 
 export function FavButton({ id }) {
   const active = isFavorite(id);
+  const ref = useRef(null);
 
-  function applyButtonState(btn, isActive) {
-    btn.classList.toggle("ddd-fav-btn--active", isActive);
-    btn.textContent = isActive ? "★" : "☆";
-    const label = isActive ? "Remove from favorites" : "Add to favorites";
-    btn.setAttribute("aria-label", label);
-    btn.title = label;
-  }
+  useEffect(() => {
+    const btn = ref.current;
+    if (!btn) return;
 
-  function toggleButton(btn) {
-    const added = toggleFavorite(id);
-    applyButtonState(btn, added);
-  }
-
-  function handlePointerUp(e) {
-    if (typeof e.button === "number" && e.button !== 0) return;
-
-    const btn = e.currentTarget;
-    stopFavoriteEvent(e);
-    btn.dataset.dddFavPointerHandled = "true";
-    toggleButton(btn);
-    setTimeout(() => {
-      delete btn.dataset.dddFavPointerHandled;
-    }, 0);
-  }
-
-  function handleClick(e) {
-    stopFavoriteEvent(e);
-    if (e.currentTarget.dataset.dddFavPointerHandled === "true") {
-      delete e.currentTarget.dataset.dddFavPointerHandled;
-      return;
+    function handleClick(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      toggleFavorite(id);
     }
 
-    toggleButton(e.currentTarget);
-  }
+    btn.addEventListener("click", handleClick, true);
+    return () => btn.removeEventListener("click", handleClick, true);
+  }, [id]);
 
   return (
     <button
+      ref={ref}
       class={`ddd-fav-btn${active ? " ddd-fav-btn--active" : ""}`}
       data-fav-id={id}
       aria-label={active ? "Remove from favorites" : "Add to favorites"}
       title={active ? "Remove from favorites" : "Add to favorites"}
-      onPointerDown={stopFavoriteEvent}
-      onPointerUp={handlePointerUp}
-      onMouseDown={stopFavoriteEvent}
-      onMouseUp={stopFavoriteEvent}
-      onClick={handleClick}
     >
       {active ? "★" : "☆"}
     </button>

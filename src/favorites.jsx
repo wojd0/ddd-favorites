@@ -136,6 +136,15 @@ function fixSessionLinks() {
   );
 }
 
+// ── Scroll to schedule tabs on load ───────────────────────────────────────────
+
+function scrollToSchedule() {
+  const favTab = document.getElementById("ddd-fav-tab");
+  if (favTab) {
+    favTab.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}
+
 // ── MutationObserver — handles lazy-rendered sessions ─────────────────────────
 
 function observe() {
@@ -152,5 +161,6 @@ export function init() {
   injectFavTab();
   injectFavButtons();
   fixSessionLinks();
+  scrollToSchedule();
   observe();
 }
