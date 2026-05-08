@@ -1,4 +1,4 @@
-import {signal, computed} from "@preact/signals";
+import { signal } from "@preact/signals";
 
 const LS_KEY = "ddd_milano_favorites";
 
@@ -27,7 +27,9 @@ export function isFavorite(id) {
 function save(favs) {
   try {
     localStorage.setItem(LS_KEY, JSON.stringify(favs));
-  } catch { /* quota exceeded or private browsing — state stays in-memory */ }
+  } catch {
+    /* quota exceeded or private browsing — state stays in-memory */
+  }
 }
 
 export function toggleFavorite(id) {
@@ -52,6 +54,7 @@ export function getSessionId(session) {
   const day = session.closest("[data-date]");
   const date = day ? day.dataset.date : "unknown";
   const start = session.dataset.start || "";
-  const title = session.querySelector(".c-day__session-title")?.textContent?.trim() || "";
+  const title =
+    session.querySelector(".c-day__session-title")?.textContent?.trim() || "";
   return `${date}__${start}__${title}`;
 }

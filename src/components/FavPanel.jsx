@@ -1,8 +1,8 @@
 import {
-  favorites,
-  toggleFavorite,
   clearFavorites,
+  favorites,
   getSessionId,
+  toggleFavorite,
 } from "../store";
 import "./FavPanel.sass";
 
@@ -29,7 +29,7 @@ function collectFavorites() {
   });
 
   const domIds = new Set(
-    [...document.querySelectorAll(".c-day__session")].map(getSessionId)
+    [...document.querySelectorAll(".c-day__session")].map(getSessionId),
   );
   const missing = favs.filter((id) => !domIds.has(id));
 
@@ -97,7 +97,8 @@ function FavItem({ id, session }) {
     session.querySelector(".c-day__session-description")?.textContent?.trim() ||
     "";
   const colophon =
-    session.querySelector(".c-day__session-colophon")?.textContent?.trim() || "";
+    session.querySelector(".c-day__session-colophon")?.textContent?.trim() ||
+    "";
   const tag =
     session.querySelector(".c-day__session-tag")?.textContent?.trim() || "";
   const start = session.dataset.start || "";
@@ -135,9 +136,7 @@ function FavItem({ id, session }) {
       {description && (
         <p class="ddd-fav-item__desc u-text-mono">{description}</p>
       )}
-      {colophon && (
-        <p class="ddd-fav-item__colophon u-text-mono">{colophon}</p>
-      )}
+      {colophon && <p class="ddd-fav-item__colophon u-text-mono">{colophon}</p>}
       {link && (
         <a
           href={link}
@@ -149,6 +148,7 @@ function FavItem({ id, session }) {
         </a>
       )}
       <button
+        type="button"
         class="ddd-fav-remove-btn u-text-mono"
         data-fav-id={id}
         aria-label="Remove from favorites"
@@ -184,7 +184,11 @@ export function FavPanel() {
     <>
       <div class="ddd-fav-toolbar">
         <span class="ddd-fav-count u-text-mono">{favs.length} favorite(s)</span>
-        <button class="ddd-fav-clear-btn u-text-mono" onClick={handleClearAll}>
+        <button
+          type="button"
+          class="ddd-fav-clear-btn u-text-mono"
+          onClick={handleClearAll}
+        >
           Clear favorites
         </button>
       </div>

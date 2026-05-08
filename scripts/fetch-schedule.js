@@ -6,8 +6,8 @@
  * public/index.html so Vite can pick it up as the entry HTML.
  */
 
-import {readFileSync, writeFileSync, mkdirSync} from "fs";
-import {parse} from "node-html-parser";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { parse } from "node-html-parser";
 
 const ORIGIN = "https://milano.ddd.live";
 const SCHEDULE_URL = `${ORIGIN}/schedule/`;
@@ -33,7 +33,7 @@ if (!res.ok) {
 const html = await res.text();
 console.log(`[fetch-schedule] Fetched ${html.length} bytes`);
 
-const root = parse(html, {comment: true, fixNestedATags: true});
+const root = parse(html, { comment: true, fixNestedATags: true });
 
 // ── Rewrite relative URLs to absolute ────────────────────────────────────────
 // Attributes that can carry URLs
@@ -111,7 +111,10 @@ if (baseEl) {
 // ── Inject build timestamp comment ───────────────────────────────────────────
 const body = root.querySelector("body");
 if (body) {
-  body.insertAdjacentHTML("afterbegin", `<!-- ddd-favorites mirror – built at ${new Date().toISOString()} from ${SCHEDULE_URL} -->\n`);
+  body.insertAdjacentHTML(
+    "afterbegin",
+    `<!-- ddd-favorites mirror – built at ${new Date().toISOString()} from ${SCHEDULE_URL} -->\n`,
+  );
 }
 
 // ── Inject our favorites script ───────────────────────────────────────────────
@@ -121,10 +124,13 @@ if (body) {
 // the page's own origin (localhost in dev) rather than the <base href> domain.
 const head = root.querySelector("head");
 if (head) {
-  head.insertAdjacentHTML("afterbegin", `<script type="module" src="/src/init.jsx"></script>\n`);
+  head.insertAdjacentHTML(
+    "afterbegin",
+    `<script type="module" src="/src/init.jsx"></script>\n`,
+  );
 }
 
 // ── Write output ──────────────────────────────────────────────────────────────
-mkdirSync(OUT_DIR, {recursive: true});
+mkdirSync(OUT_DIR, { recursive: true });
 writeFileSync(OUT_FILE, root.toString(), "utf8");
 console.log(`[fetch-schedule] Written to ${OUT_FILE}`);

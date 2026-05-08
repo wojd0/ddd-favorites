@@ -6,12 +6,12 @@
  * next to the existing Thu/Fri/Sat day tabs.  Persists to localStorage.
  */
 
+import { effect, signal } from "@preact/signals";
 import { render } from "preact";
-import { signal, effect } from "@preact/signals";
-import { favorites, getSessionId } from "./store";
 import { FavButton } from "./components/FavButton";
-import { FavTab } from "./components/FavTab";
 import { FavPanel } from "./components/FavPanel";
+import { FavTab } from "./components/FavTab";
+import { favorites, getSessionId } from "./store";
 import "./favorites.sass";
 
 // ── Reactive state for tab ────────────────────────────────────────────────────
@@ -144,7 +144,7 @@ function fixSessionLinks() {
       e.stopPropagation();
       window.open(link.href, "_blank", "noopener");
     },
-    true
+    true,
   );
 }
 

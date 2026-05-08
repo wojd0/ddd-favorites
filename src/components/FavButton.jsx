@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "preact/hooks";
+import { useEffect, useRef } from "preact/hooks";
 import { isFavorite, toggleFavorite } from "../store";
 import "./FavButton.sass";
 
@@ -23,6 +23,7 @@ export function FavButton({ id }) {
 
   return (
     <button
+      type="button"
       ref={ref}
       class={`ddd-fav-btn${active ? " ddd-fav-btn--active" : ""}`}
       data-fav-id={id}
