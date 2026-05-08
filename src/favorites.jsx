@@ -75,11 +75,14 @@ function injectFavTab() {
   function handleTabClick() {
     if (favTabActive.value) return;
 
-    // Deactivate original day tabs
-    document.querySelectorAll('[data-ref="tab-days.day"]').forEach((d) => {
-      d.classList.remove("is-active");
-      d.classList.add("is-next");
+    // All day tabs become is-prev with depth = distance from Favs (last position)
+    const dayTabs = tabBar.querySelectorAll('[data-ref="tab-days.day"]');
+    dayTabs.forEach((d, i) => {
+      d.classList.remove("is-active", "is-next");
+      d.classList.add("is-prev");
+      d.style.setProperty("--depth", String(dayTabs.length - i));
     });
+    tabBtn.style.setProperty("--depth", "0");
 
     favTabActive.value = true;
     cDays.style.display = "none";
@@ -94,6 +97,7 @@ function injectFavTab() {
     const dayBtn = e.target.closest('[data-ref="tab-days.day"]');
     if (!dayBtn) return;
     favTabActive.value = false;
+    tabBtn.style.setProperty("--depth", String(existingTabs.length));
     panelMount.style.display = "none";
     cDays.style.display = "";
     setTimeout(injectFavButtons, 400);
