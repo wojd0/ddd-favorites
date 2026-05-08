@@ -4,6 +4,7 @@ import {
   clearFavorites,
   getSessionId,
 } from "../store";
+import "./FavPanel.sass";
 
 const DAY_LABELS = {
   "2026-05-07": "Thu 7 May",

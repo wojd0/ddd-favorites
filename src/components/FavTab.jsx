@@ -1,3 +1,5 @@
+import "./FavTab.sass";
+
 export function FavTab() {
   return (
     <>

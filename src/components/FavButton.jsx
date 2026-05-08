@@ -1,5 +1,6 @@
 import { useRef, useEffect } from "preact/hooks";
 import { isFavorite, toggleFavorite } from "../store";
+import "./FavButton.sass";
 
 export function FavButton({ id }) {
   const active = isFavorite(id);

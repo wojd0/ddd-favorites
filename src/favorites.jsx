@@ -12,7 +12,7 @@ import { favorites, getSessionId } from "./store";
 import { FavButton } from "./components/FavButton";
 import { FavTab } from "./components/FavTab";
 import { FavPanel } from "./components/FavPanel";
-import "./favorites.css";
+import "./favorites.sass";
 
 // ── Reactive state for tab ────────────────────────────────────────────────────
 

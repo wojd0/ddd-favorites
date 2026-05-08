@@ -20,6 +20,14 @@ export default defineConfig({
     assetsInlineLimit: 4096,
   },
 
+  css: {
+    preprocessorOptions: {
+      sass: {
+        api: "modern-compiler",
+      },
+    },
+  },
+
   // During dev, serve src/ so the module import in index.html resolves
   server: {
     fs: {

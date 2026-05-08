@@ -1,0 +1,13 @@
+@use "../styles/tokens" as *
+
+.ddd-fav-tab-btn
+  cursor: pointer
+
+  &.is-active
+    --depth: 0 !important
+
+    > *
+      background: $favorite-active-bg !important
+
+    .c-tab-days_title
+      color: $favorite-tab-text
