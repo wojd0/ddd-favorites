@@ -30,6 +30,13 @@
   gap: 8px;
   flex-wrap: wrap;
 }
+.ddd-fav-session-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+}
 .ddd-fav-btn-mount {
   position: relative;
   z-index: 5;

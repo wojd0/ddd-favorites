@@ -31,7 +31,19 @@ function injectFavButtons() {
 
     const footer = session.querySelector(".c-day__session-footer");
     if (footer) {
-      footer.appendChild(mount);
+      let actions = footer.querySelector(".ddd-fav-session-actions");
+      if (!actions) {
+        actions = document.createElement("span");
+        actions.className = "ddd-fav-session-actions";
+        const link = footer.querySelector(".c-day__session-link");
+        if (link) {
+          link.before(actions);
+          actions.appendChild(link);
+        } else {
+          footer.appendChild(actions);
+        }
+      }
+      actions.appendChild(mount);
     } else {
       session.querySelector(".c-day__session-content")?.appendChild(mount);
     }
