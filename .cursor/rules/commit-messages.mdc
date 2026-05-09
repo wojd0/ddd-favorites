@@ -1,0 +1,12 @@
+---
+description: Commit message guidance for this project
+alwaysApply: true
+---
+
+# Commit Messages
+
+- Do not use `NOJIRA` or any placeholder ticket in commit messages.
+- If the user provides a Jira ticket, include that exact ticket.
+- If no Jira ticket is provided, omit the ticket instead of inventing one.
+- Start commit messages with an uppercase letter.
+- Keep commit messages concise and focused on the change.
