@@ -8,6 +8,7 @@
 
 import { effect, signal } from "@preact/signals";
 import { render } from "preact";
+import { DisclaimerStrip } from "./components/DisclaimerStrip";
 import { FavButton } from "./components/FavButton";
 import { FavPanel } from "./components/FavPanel";
 import { FavTab } from "./components/FavTab";
@@ -17,6 +18,30 @@ import "./favorites.sass";
 // ── Reactive state for tab ────────────────────────────────────────────────────
 
 const favTabActive = signal(false);
+
+function injectDisclaimerStrip() {
+  if (document.getElementById("ddd-disclaimer-strip")) return;
+
+  const mount = document.createElement("div");
+  mount.id = "ddd-disclaimer-strip";
+  document.body.prepend(mount);
+  render(<DisclaimerStrip />, mount);
+
+  const updateStripHeight = () => {
+    const stripHeight = mount.offsetHeight;
+    document.documentElement.style.setProperty(
+      "--ddd-disclaimer-strip-height",
+      `${stripHeight}px`,
+    );
+
+    document.querySelectorAll(".c-site-header__wrapper").forEach((header) => {
+      header.style.setProperty("top", `${stripHeight + 40}px`, "important");
+    });
+  };
+
+  updateStripHeight();
+  new ResizeObserver(updateStripHeight).observe(mount);
+}
 
 // ── Mount a FavButton into each session card ──────────────────────────────────
 
@@ -148,19 +173,11 @@ function fixSessionLinks() {
   );
 }
 
-// ── Scroll to schedule tabs on load ───────────────────────────────────────────
-
-function scrollToSchedule() {
-  const favTab = document.getElementById("ddd-fav-tab");
-  if (favTab) {
-    favTab.scrollIntoView({ behavior: "smooth", block: "center" });
-  }
-}
-
 // ── MutationObserver — handles lazy-rendered sessions ─────────────────────────
 
 function observe() {
   const observer = new MutationObserver(() => {
+    injectDisclaimerStrip();
     injectFavTab();
     injectFavButtons();
   });
@@ -170,9 +187,9 @@ function observe() {
 // ── Boot ──────────────────────────────────────────────────────────────────────
 
 export function init() {
+  injectDisclaimerStrip();
   injectFavTab();
   injectFavButtons();
   fixSessionLinks();
-  scrollToSchedule();
   observe();
 }

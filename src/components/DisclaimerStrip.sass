@@ -1,0 +1,37 @@
+@use "../styles/tokens" as *
+
+:root
+  --ddd-disclaimer-strip-height: 34px
+  --ddd-site-header-gap: 40px
+
+body
+  padding-top: var(--ddd-disclaimer-strip-height)
+  scroll-padding-top: var(--ddd-disclaimer-strip-height)
+
+.c-site-header__wrapper
+  top: calc(var(--ddd-disclaimer-strip-height) + var(--ddd-site-header-gap)) !important
+
+.ddd-disclaimer-strip
+  position: fixed
+  top: 0
+  left: 0
+  right: 0
+  z-index: 9999
+  display: block
+  width: 100%
+  box-sizing: border-box
+  padding: 9px 16px
+  background: $favorite-dark
+  color: #ffffff
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18)
+  font-size: 11px
+  line-height: 1.45
+  text-align: center
+
+  a
+    color: $favorite-gold
+    text-decoration: underline
+    text-underline-offset: 2px
+
+    &:hover
+      color: #ffffff
