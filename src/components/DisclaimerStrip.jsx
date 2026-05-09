@@ -1,6 +1,6 @@
 import "./DisclaimerStrip.sass";
 
-const modifierUrl = "https://wojd0.github.io";
+const modifierUrl = "https://github.com/wojd0";
 const officialUrl = "https://ddd.live";
 
 export function DisclaimerStrip() {
